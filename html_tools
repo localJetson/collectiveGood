@@ -1,0 +1,86 @@
+function extract_element_tag_attribute(given_html, given_tagName, given_attribute, text_list){
+  text_list.length = 0
+
+  var indx_ref = 0;
+  var indx_attr;
+  var tagOpening = "<" + given_tagName;
+  var tagClosing = "</" + given_tagName + ">";
+
+  while(true){
+    var indx_tag_str = given_html.indexOf(tagOpening, indx_ref);
+    if(indx_tag_str === -1) { break; }
+
+    var indx_tag_end = given_html.indexOf('>', indx_tag_str);
+    if(indx_tag_end === -1) { break; }
+    
+    indx_ref = indx_tag_end+1;
+    indx_attr = given_html.indexOf(given_attribute, indx_tag_str);
+
+    if(indx_attr !== -1 && indx_attr < indx_tag_end){
+      var probe_open  = indx_tag_end + 1;
+      var probe_close = indx_tag_end + 1;
+
+      while(true){
+        probe_open  = given_html.indexOf(tagOpening, probe_open );
+        probe_close = given_html.indexOf(tagClosing, probe_close);
+
+        if(probe_close === -1)        { return -1; }
+        if(probe_open  === -1)        { break;     }
+        if(probe_open > probe_close)  { break;     }
+
+        probe_open++;
+        probe_close++;
+      }
+
+      text_list.push(given_html.substring(indx_tag_str, probe_close + tagClosing.length));
+    }
+  }
+
+  return text_list.length;
+}
+
+function extract_element_tag(given_html, given_tagName, text_list){
+  text_list.length = 0
+
+  var indx_ref = 0;
+  var tagOpening = "<" + given_tagName;
+  var tagClosing = "</" + given_tagName + ">";
+
+  while(true){
+    var indx_tag_str = given_html.indexOf(tagOpening, indx_ref);
+    if(indx_tag_str === -1) { break; }
+
+    var indx_tag_end = given_html.indexOf('>', indx_tag_str);
+    if(indx_tag_end === -1) { break; }
+    
+    indx_ref = indx_tag_end+1;
+
+    var probe_open  = indx_tag_end + 1;
+    var probe_close = indx_tag_end + 1;
+
+    while(true){
+      probe_open  = given_html.indexOf(tagOpening, probe_open );
+      probe_close = given_html.indexOf(tagClosing, probe_close);
+
+      if(probe_close === -1)        { return -1; }
+      if(probe_open  === -1)        { break;     }
+      if(probe_open > probe_close)  { break;     }
+
+      probe_open++;
+      probe_close++;
+    }
+
+    text_list.push(given_html.substring(indx_tag_str, probe_close + tagClosing.length));
+  }
+
+  return text_list.length;
+}
+
+function temp(){
+  var source_html = get_html();
+  var temp_list = [];
+
+  extract_element_tag(source_html, 'dt', temp_list)
+
+  console.log(temp_list);
+}
